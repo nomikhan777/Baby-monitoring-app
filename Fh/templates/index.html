@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Attendance</title>
+    <style>
+        .grid-container {
+        display: grid;
+        grid-template-columns: auto auto;
+        background-color: #2196F3;
+        padding: 10px;
+        }
+        .grid-item {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        padding: 20px;
+        font-size: 30px;
+        text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Baby monitorning app</h1>
+    </div>
+
+
+    <div id="Results">
+        <div class="grid-container">
+            <div class="grid-item">Warning Message :</div>
+            <div class="grid-item" id="warning_message"></div>
+            <div class="grid-item">Warning Serverity :</div>
+            <div class="grid-item" id="warning_sever"></div>
+        </div>
+
+
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8  offset-lg-2">
+                <h3 class="mt-5">Live Streaming</h3>
+                <img src="{{ url_for('vid_stream') }}" width="30%">
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <form action="{{ url_for('start_stream') }}" method="post">
+            <button type="submit">Start</button>
+        </form>
+        <form action="{{ url_for('stop_all_cameras')}}" method="post">
+            <Button type="submit">Stop</Button>
+        </form>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+    <script>
+        warning_msg_obj = document.getElementById("warning_message")
+        function updateValues(){
+            $.get("/getResult", function(data){
+                var object = JSON.parse(data)
+                if(object !=null){
+                    $("#warning_message").html(object.warning_message)
+                    warning_msg_obj.style = "color:green;"
+                    $("#warning_sever").html(object.warning_severity)
+
+                }else{
+                    $("#warning_message").html("Recognizing...")
+                    $("#warning_sever").html("Recognizing...")
+                    warning_msg_obj.style = "color:red;"
+
+                }
+
+                console.log(object.warning_message)
+                console.log(object.warning_severity)
+
+
+            });
+
+        }
+        updateValues()
+        var intervalId = setInterval(function(){
+            updateValues()
+        }, 20);
+    </script>
+
+</body>
+</html>
